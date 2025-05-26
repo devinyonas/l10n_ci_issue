@@ -1,0 +1,52 @@
+name: Steve CI
+
+on:
+  pull_request:
+    paths:
+      - "lib/**"
+      - "test/**"
+      - "packages/**"
+      - ".github/workflows/steve.yaml"
+      - "pubspec.yaml"
+      - "coverage.sh"
+
+jobs:
+  semantic-pull-request:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
+
+  spell-check:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
+    with:
+      config: .github/cspell.json
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2.19.0
+        with:
+          flutter-version: 3.32.0
+          channel: "stable"
+
+      - name: Install Dependencies
+        run: flutter pub get
+  
+      - name: Format
+        run: dart format --set-exit-if-changed lib test
+  
+      - name: Analyze
+        run: flutter analyze lib test
+
+      - name: Localizations
+        run: |
+          flutter gen-l10n --arb-dir="lib/l10n/arb"
+          chmod +x tools/localizations.sh # Make the script executable
+          ./tools/localizations.sh
+
+      - name: Generated files
+        run: |
+          chmod +x tools/generated.sh # Make the script executable
+          ./tools/generated.sh
+  
