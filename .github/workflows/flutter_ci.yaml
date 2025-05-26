@@ -6,7 +6,7 @@ on:
       - "lib/**"
       - "test/**"
       - "packages/**"
-      - ".github/workflows/steve.yaml"
+      - ".github/workflows/flutter_ci.yaml"
       - "pubspec.yaml"
       - "coverage.sh"
 
