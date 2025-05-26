@@ -1,4 +1,4 @@
-name: Steve CI
+name: FLUTTER CI
 
 on:
   pull_request:
